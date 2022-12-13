@@ -11,13 +11,19 @@
   "autoload": {
     "psr-4": {
       "WebmanTech\\LaravelCache\\": "src"
-    }
+    },
+    "files": [
+      "src/helper.php"
+    ]
   },
   "require-dev": {
-    "workerman/webman-framework": "^1.4",
+    "illuminate/database": "^8.83",
+    "illuminate/events": "^8.83",
     "illuminate/filesystem": "^8.83",
     "illuminate/redis": "^8.83",
-    "illuminate/database": "^8.83",
-    "illuminate/events": "^8.83"
+    "workerman/webman-framework": "^1.4"
+  },
+  "config": {
+    "sort-packages": true
   }
 }
