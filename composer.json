@@ -1,0 +1,13 @@
+{
+  "name": "webman-tech/laravel-cache",
+  "type": "library",
+  "license": "MIT",
+  "description": "Webman plugin webman-tech/laravel-cache",
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "WebmanTech\\LaravelCache\\": "src"
+    }
+  }
+}
