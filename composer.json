@@ -4,10 +4,20 @@
   "license": "MIT",
   "description": "Webman plugin webman-tech/laravel-cache",
   "require": {
+    "php": ">=7.2",
+    "illuminate/cache": "^8.0|^9.0",
+    "illuminate/config": "^8.0|^9.0"
   },
   "autoload": {
     "psr-4": {
       "WebmanTech\\LaravelCache\\": "src"
     }
+  },
+  "require-dev": {
+    "workerman/webman-framework": "^1.4",
+    "illuminate/filesystem": "^8.83",
+    "illuminate/redis": "^8.83",
+    "illuminate/database": "^8.83",
+    "illuminate/events": "^8.83"
   }
 }
