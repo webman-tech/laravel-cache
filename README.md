@@ -61,3 +61,19 @@ Route::get('/example2', function () {
 - `php webman cache:forget xxx`: 删除缓存下的某个键
 
 - `php webman cache:clear`: 清空所有缓存 （！！注意：此方法使用 Cache::flush 来清除，不会使用缓存配置的 prefix，即该缓存空间下的所有项都将被清除！！）
+
+### extend 支持
+
+在 `config/plugin/webman-tech/laravel-cache/cache.php` 中配置 `extend`
+
+```PHP
+<?php
+
+return [
+    'extend' => function(\Illuminate\Cache\CacheManager $cache) {
+        $cache->extend('mongo', function () use ($cache) {
+           return $cache->repository(new MongoStore);
+        });
+    }
+];
+```

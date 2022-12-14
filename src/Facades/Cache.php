@@ -4,6 +4,7 @@ namespace WebmanTech\LaravelCache\Facades;
 
 use Illuminate\Cache\CacheManager;
 use support\Container;
+use WebmanTech\LaravelCache\CacheConfigRepository;
 use WebmanTech\LaravelCache\Mock\LaravelApp;
 
 /**
@@ -40,7 +41,11 @@ class Cache
     public static function instance(): CacheManager
     {
         if (!static::$_instance) {
-            static::$_instance = new CacheManager(Container::get(LaravelApp::class));
+            $cacheManager = new CacheManager(Container::get(LaravelApp::class));
+            if ($extend = CacheConfigRepository::instance()->get('cache.extend')) {
+               call_user_func($extend, $cacheManager);
+            }
+            static::$_instance = $cacheManager;
         }
 
         return static::$_instance;

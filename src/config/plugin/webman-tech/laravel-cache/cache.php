@@ -61,4 +61,5 @@ return [
         ],
     ],
     'prefix' => getenv('CACHE_PREFIX', Str::slug(config('app.name', 'webman'), '_').'_cache'),
+    'extend' => null,
 ];
