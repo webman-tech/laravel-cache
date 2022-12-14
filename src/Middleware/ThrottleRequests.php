@@ -61,7 +61,7 @@ class ThrottleRequests implements MiddlewareInterface
 
         /** @var Limit[] $limits */
         $limits = collect(Arr::wrap($limiterResponse))->map(function (Limit $limit) {
-            $limit->key = $this->config['limiter_for'] . $limit->key;
+            $limit->key = $this->config['limiter_for'] . ':' . $limit->key;
             return $limit;
         })->all();
 

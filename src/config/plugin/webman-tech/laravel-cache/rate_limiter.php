@@ -15,7 +15,8 @@ return [
      */
     'for' => [
         RateLimiterFacade::FOR_REQUEST => function (Request $request) {
-            return Limit::perMinute(1000);
+            return Limit::perMinute(1000)
+                ->by($request->getRealIp());
         }
     ],
     /**
