@@ -55,3 +55,9 @@ Route::get('/example2', function () {
     ]),
 ]);
 ```
+
+### command 支持
+
+- `php webman cache:forget xxx`: 删除缓存下的某个键
+
+- `php webman cache:clear`: 清空所有缓存 （！！注意：此方法使用 Cache::flush 来清除，不会使用缓存配置的 prefix，即该缓存空间下的所有项都将被清除！！）
