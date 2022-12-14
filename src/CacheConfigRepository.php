@@ -11,6 +11,7 @@ final class CacheConfigRepository extends Repository
     {
         parent::__construct([
             'cache' => config('plugin.webman-tech.laravel-cache.cache', []),
+            'rate_limiter' => config('plugin.webman-tech.laravel-cache.rate_limiter', [])
         ]);
     }
 

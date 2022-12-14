@@ -21,6 +21,8 @@ use WebmanTech\LaravelCache\CacheConfigRepository;
  */
 class RateLimiter
 {
+    public const FOR_REQUEST = 'request';
+
     private static $_instance;
 
     /**
@@ -29,11 +31,17 @@ class RateLimiter
     public static function instance(): LaravelRateLimiter
     {
         if (!static::$_instance) {
-            static::$_instance = new LaravelRateLimiter(
-                Cache::instance()->store(
-                    CacheConfigRepository::instance()->get('cache.limiter')
+            $config = CacheConfigRepository::instance();
+            $cache = Cache::instance()->store(
+                $config->get('rate_limiter.limiter',
+                    $config->get('cache.limiter')
                 )
             );
+            $rateLimiter = new LaravelRateLimiter($cache);
+            foreach ($config->get('rate_limiter.for', []) as $name => $callback) {
+                $rateLimiter->for($name, $callback);
+            }
+            static::$_instance = $rateLimiter;
         }
 
         return static::$_instance;
