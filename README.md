@@ -60,7 +60,7 @@ Route::get('/example2', function () {
 
 - `php webman cache:forget xxx`: 删除缓存下的某个键
 
-- `php webman cache:clear`: 清空所有缓存 （！！注意：此方法使用 Cache::flush 来清除，不会使用缓存配置的 prefix，即该缓存空间下的所有项都将被清除！！）
+- `php webman cache:clear`: 清空所有缓存 （！！注意：此方法使用 Cache::flush 来清除，影响范围见下文中的使用注意事项！！）
 
 ### extend 支持
 
@@ -77,3 +77,19 @@ return [
     }
 ];
 ```
+
+## 使用注意事项
+
+<details>
+<summary>关于默认的缓存过期时间</summary>
+
+Laravel Cache 没有缓存的默认过期时间
+
+Cache::put 方法的第三个参数 ttl，不传时为永久缓存，为 0 或负数时表示移除该缓存（等同于 forget）
+</details>
+
+<details>
+<summary>Cache::flush 清楚的范围</summary>
+
+会清空该存储器下的所有数据，而非指定的 prefix 下的，所以当缓存共享，通过 prefix 区分时，需要谨慎调用该方法
+</details>
