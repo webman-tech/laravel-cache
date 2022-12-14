@@ -22,8 +22,9 @@ return [
      * ThrottleRequestsFactory 的配置
      */
     'throttle_requests' => [
-        'use_redis' => false,
-        'redis_connection_name' => null,
-        'limiter_for' => null,
+        'use_redis' => false, // 是否使用 redis 模式，推荐
+        'redis_connection_name' => null, // redis 模式下使用的 redis connection Name
+        'limiter_for' => null, // 默认 RateLimiter 的 for 的 name
+        'with_headers' => true, // 返回时是否携带 header 信息
     ]
 ];

@@ -13,6 +13,7 @@ class ThrottleRequestsFactory implements MiddlewareInterface
         'use_redis' => false, // 是否使用 redis 模式，推荐
         'redis_connection_name' => null, // redis 模式下使用的 redis connection Name
         'limiter_for' => null, // RateLimiter 的 for 的 name
+        'with_headers' => true, // 返回时是否携带 header 信息
     ];
 
     public function __construct(array $config = [])
@@ -30,12 +31,9 @@ class ThrottleRequestsFactory implements MiddlewareInterface
     public function process(Request $request, callable $handler): Response
     {
         if ($this->config['use_redis']) {
-            $throttleRequest = new ThrottleRequestsWithRedis(
-                $this->config['limiter_for'],
-                $this->config['redis_connection_name']
-            );
+            $throttleRequest = new ThrottleRequestsWithRedis($this->config);
         } else {
-            $throttleRequest = new ThrottleRequests($this->config['limiter_for']);
+            $throttleRequest = new ThrottleRequests($this->config);
         }
 
         return $throttleRequest->process($request, $handler);

@@ -26,11 +26,12 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
      */
     public $remaining = [];
 
-    public function __construct(string $limiterName = null, string $redisName = null)
+    public function __construct(array $config = [])
     {
-        parent::__construct($limiterName);
+        $this->config['redis_connection_name'] = null;
+        parent::__construct($config);
 
-        $this->redis = \support\Redis::instance()->connection($redisName);
+        $this->redis = \support\Redis::instance()->connection($this->config['redis_connection_name']);
     }
 
     /**

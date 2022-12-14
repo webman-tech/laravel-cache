@@ -26,14 +26,20 @@ class ThrottleRequests implements MiddlewareInterface
     protected $limiter;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $limiterName;
+    protected $config = [
+        'limiter_for' => null,
+        'with_headers' => true,
+    ];
 
-    public function __construct(string $limiterName = null)
+    public function __construct(array $config = [])
     {
         $this->limiter = RateLimiterFacade::instance();
-        $this->limiterName = $limiterName ?? RateLimiterFacade::FOR_REQUEST;
+        $this->config = array_merge($this->config, $config);
+        if ($this->config['limiter_for'] === null) {
+            $this->config['limiter_for'] = RateLimiterFacade::FOR_REQUEST;
+        }
     }
 
     /**
@@ -41,7 +47,7 @@ class ThrottleRequests implements MiddlewareInterface
      */
     public function process(Request $request, callable $handler): Response
     {
-        $limiter = $this->limiter->limiter($this->limiterName);
+        $limiter = $this->limiter->limiter($this->config['limiter_for']);
         if ($limiter === null) {
             return $handler($request);
         }
@@ -55,7 +61,7 @@ class ThrottleRequests implements MiddlewareInterface
 
         /** @var Limit[] $limits */
         $limits = collect(Arr::wrap($limiterResponse))->map(function (Limit $limit) {
-            $limit->key = $this->limiterName . $limit->key;
+            $limit->key = $this->config['limiter_for'] . $limit->key;
             return $limit;
         })->all();
 
@@ -138,6 +144,10 @@ class ThrottleRequests implements MiddlewareInterface
      */
     protected function getHeaders(int $maxAttempts, int $remainingAttempts, ?int $retryAfter = null, ?Response $response = null): array
     {
+        if (!$this->config['with_headers']) {
+            return [];
+        }
+
         if ($response &&
             !is_null($response->getHeader('X-RateLimit-Remaining')) &&
             (int)$response->getHeader('X-RateLimit-Remaining') <= $remainingAttempts) {
