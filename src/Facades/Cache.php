@@ -3,7 +3,10 @@
 namespace WebmanTech\LaravelCache\Facades;
 
 use Illuminate\Cache\CacheManager;
+use Psr\Cache\CacheItemPoolInterface;
+use Psr\SimpleCache\CacheInterface;
 use support\Container;
+use Symfony\Component\Cache\Adapter\Psr16Adapter;
 use WebmanTech\LaravelCache\CacheConfigRepository;
 use WebmanTech\LaravelCache\Mock\LaravelApp;
 
@@ -43,12 +46,30 @@ class Cache
         if (!static::$_instance) {
             $cacheManager = new CacheManager(Container::get(LaravelApp::class));
             if ($extend = CacheConfigRepository::instance()->get('cache.extend')) {
-               call_user_func($extend, $cacheManager);
+                call_user_func($extend, $cacheManager);
             }
             static::$_instance = $cacheManager;
         }
 
         return static::$_instance;
+    }
+
+    /**
+     * PSR16 实例
+     * @return CacheInterface
+     */
+    public static function psr16(): CacheInterface
+    {
+        return static::instance()->store();
+    }
+
+    /**
+     * PSR6 实例
+     * @return CacheItemPoolInterface
+     */
+    public static function psr6(): CacheItemPoolInterface
+    {
+        return new Psr16Adapter(static::psr16());
     }
 
     public static function __callStatic($name, $arguments)
