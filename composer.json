@@ -5,8 +5,8 @@
   "description": "Webman plugin webman-tech/laravel-cache",
   "require": {
     "php": ">=7.2",
-    "illuminate/cache": "^8.0|^9.0",
-    "illuminate/config": "^8.0|^9.0"
+    "illuminate/cache": "^8.0|^9.0|^10.0",
+    "illuminate/config": "^8.0|^9.0|^10.0"
   },
   "autoload": {
     "psr-4": {
