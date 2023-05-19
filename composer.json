@@ -5,14 +5,14 @@
   "description": "Webman plugin webman-tech/laravel-cache",
   "require": {
     "php": ">=7.2",
-    "illuminate/cache": ">=8.0",
-    "illuminate/config": ">=8.0"
+    "illuminate/cache": ">=7.0",
+    "illuminate/config": ">=7.0"
   },
   "require-dev": {
-    "illuminate/database": ">=8.0",
-    "illuminate/events": ">=8.0",
-    "illuminate/filesystem": ">=8.0",
-    "illuminate/redis": ">=8.0",
+    "illuminate/database": ">=7.0",
+    "illuminate/events": ">=7.0",
+    "illuminate/filesystem": ">=7.0",
+    "illuminate/redis": ">=7.0",
     "phpunit/phpunit": "^8|^9",
     "psr/cache": "^1.0",
     "psr/simple-cache": "^1.0",
