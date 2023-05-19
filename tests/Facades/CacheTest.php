@@ -119,7 +119,7 @@ class CacheTest extends TestCase
         $this->assertEquals(1, Cache::get('forever_key'));
     }
 
-    public function testTTL()
+    public function testTtl()
     {
         Cache::add('ttl_key', 1, 2);
         $this->assertTrue(Cache::has('ttl_key'));

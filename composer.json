@@ -8,6 +8,17 @@
     "illuminate/cache": ">=8.0",
     "illuminate/config": ">=8.0"
   },
+  "require-dev": {
+    "illuminate/database": "^8",
+    "illuminate/events": "^8",
+    "illuminate/filesystem": "^8",
+    "illuminate/redis": "^8",
+    "phpunit/phpunit": "^9.6",
+    "psr/cache": "^1.0",
+    "psr/simple-cache": "^1.0",
+    "symfony/cache": "^5.4",
+    "workerman/webman-framework": "^1.4"
+  },
   "autoload": {
     "psr-4": {
       "WebmanTech\\LaravelCache\\": "src"
@@ -21,18 +32,10 @@
       "WebmanTech\\LaravelCache\\Tests\\": "tests"
     }
   },
-  "require-dev": {
-    "illuminate/database": "^8",
-    "illuminate/events": "^8",
-    "illuminate/filesystem": "^8",
-    "illuminate/redis": "^8",
-    "phpunit/phpunit": "^9.6",
-    "psr/cache": "^1.0",
-    "psr/simple-cache": "^1.0",
-    "symfony/cache": "^5.4",
-    "workerman/webman-framework": "^1.4"
-  },
   "config": {
     "sort-packages": true
+  },
+  "scripts": {
+    "test": "phpunit --testdox --no-interaction"
   }
 }

@@ -2,6 +2,6 @@ build
 vendor
 .idea
 .vscode
-.phpunit*
 composer.lock
+/phpunit.xml
 .phpunit.cache
