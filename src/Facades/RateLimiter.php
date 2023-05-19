@@ -12,6 +12,7 @@ use WebmanTech\LaravelCache\CacheConfigRepository;
  * @method static int hit($key, $decaySeconds = 60)
  * @method static mixed attempts($key)
  * @method static mixed resetAttempts($key)
+ * @method static int remaining($key, $maxAttempts)
  * @method static int retriesLeft($key, $maxAttempts)
  * @method static void clear($key)
  * @method static int availableIn($key)
