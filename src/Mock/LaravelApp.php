@@ -81,6 +81,7 @@ final class LaravelApp implements \ArrayAccess
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->container->has($offset);
@@ -89,6 +90,7 @@ final class LaravelApp implements \ArrayAccess
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->container->get($offset);
@@ -97,6 +99,7 @@ final class LaravelApp implements \ArrayAccess
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         throw new \InvalidArgumentException('Not support');
@@ -105,6 +108,7 @@ final class LaravelApp implements \ArrayAccess
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \InvalidArgumentException('Not support');
