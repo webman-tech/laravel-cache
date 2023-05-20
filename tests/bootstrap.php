@@ -8,7 +8,7 @@ if (!file_exists(__DIR__ . '/support/helpers.php')) {
 }
 require_once __DIR__ . '/support/helpers.php';
 
-if (!file_exists(__DIR__ . '/config')) {
+if (!file_exists(__DIR__ . '/config/plugin/webman-tech/laravel-cache')) {
     \WebmanTech\LaravelCache\Install::install();
 }
 
