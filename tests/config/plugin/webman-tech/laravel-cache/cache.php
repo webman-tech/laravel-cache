@@ -11,6 +11,9 @@ return [
         'apc' => [
             'driver' => 'apc',
         ],
+        'null' => [
+            'driver' => 'null',
+        ],
         'array' => [
             'driver' => 'array',
             'serialize' => false,
