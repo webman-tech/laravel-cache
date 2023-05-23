@@ -9,6 +9,8 @@ use Illuminate\Contracts\Cache\LockTimeoutException;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
+use Throwable;
+use WebmanTech\LaravelCache\Exceptions\PreventFlushException;
 use WebmanTech\LaravelCache\Facades\Cache;
 
 /**
@@ -16,12 +18,6 @@ use WebmanTech\LaravelCache\Facades\Cache;
  */
 class CacheTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Cache::flush();
-    }
-
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -189,7 +185,7 @@ class CacheTest extends TestCase
         $this->assertFalse($lock2->get()); // 2秒内获取不到锁
         try {
             $lock2->block(2);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->assertInstanceOf(LockTimeoutException::class, $e);
         }
 
@@ -201,5 +197,19 @@ class CacheTest extends TestCase
         $this->assertEquals($lock2->owner(), $owner);
         $this->assertTrue($lock->get());
         $this->assertTrue($lock2->release());
+    }
+
+    public function testFlushPrevent()
+    {
+        // ignore 掉的 store 可以正常 flush
+        $this->assertTrue(Cache::store('null')->flush());
+        // 非 ignore 的不能 flush
+        try {
+            Cache::store('array')->flush();
+        } catch (Throwable $e) {
+            $this->assertInstanceOf(PreventFlushException::class, $e);
+        }
+        // 直接取到 store 仍然可以 flush
+        $this->assertTrue(Cache::store('array')->getStore()->flush());
     }
 }
