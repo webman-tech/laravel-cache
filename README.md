@@ -96,7 +96,10 @@ Cache::put 方法的第三个参数 ttl，不传时为永久缓存，为 0 或�
 </details>
 
 <details>
-<summary>Cache::flush 清楚的范围</summary>
+<summary>Cache::flush 清除的范围</summary>
 
 会清空该存储器下的所有数据，而非指定的 prefix 下的，所以当缓存共享，通过 prefix 区分时，需要谨慎调用该方法
+
+可以通过在 `config/plugin/webman-tech/laravel-cache/app.php` 下配置 `flush` 下的 `prevent` 为 `true` 来全局禁止使用 `flush` 方法
+（注意：无法阻止通过实例直接获取到 Store 来 flush 的情况 `Cache::instance()->getStore()->flush()`），
 </details>
