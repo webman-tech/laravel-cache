@@ -1,0 +1,26 @@
+{
+  "name": "webman-tech/laravel-cache",
+  "type": "library",
+  "license": "MIT",
+  "description": "Webman plugin webman-tech/laravel-cache",
+  "require": {
+    "php": "^8.2",
+    "illuminate/cache": "^11.0",
+    "illuminate/config": "^11.0",
+    "illuminate/events": "^11.0"
+  },
+  "_comments": [
+    "symfony/cache for psr16"
+  ],
+  "autoload": {
+    "psr-4": {
+      "WebmanTech\\LaravelCache\\": ""
+    },
+    "files": [
+      "helper.php"
+    ]
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

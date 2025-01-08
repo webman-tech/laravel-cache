@@ -1,0 +1,70 @@
+# webman-tech/laravel-cache
+
+Laravel [illuminate/cache](https://packagist.org/packages/illuminate/cache) for webman
+
+## 介绍
+
+站在巨人（laravel）的肩膀上使缓存使用更加*可靠*和*便捷*
+
+所有方法和配置与 laravel 几乎一模一样，因此使用方式完全参考 [Laravel文档](https://laravel.com/docs/cache) 即可
+
+## 安装
+
+```bash
+composer require webman-tech/laravel-cache
+```
+
+## 使用
+
+所有 API 同 laravel，以下仅对有些特殊的操作做说明
+
+### Facade 入口
+
+使用 `WebmanTech\LaravelCache\Facades\Cache` 代替 `Illuminate\Support\Facades\Cache`
+
+### command 支持
+
+- `php webman cache:forget xxx`: 删除缓存下的某个键
+
+- `php webman cache:clear`: 清空所有缓存 （！！注意：此方法使用 Cache::flush 来清除，影响范围见下文中的使用注意事项！！）
+
+### extend 支持
+
+在 `config/plugin/webman-tech/laravel-cache/cache.php` 中配置 `extend`
+
+```PHP
+<?php
+
+return [
+    'extend' => function(\Illuminate\Cache\CacheManager $cache) {
+        $cache->extend('mongo', function () use ($cache) {
+           return $cache->repository(new MongoStore);
+        });
+    }
+];
+```
+
+### PSR6 和 PSR16 支持
+
+- PSR16: `Cache::psr16()`
+
+- PSR6: `Cache::psr6()`，需要先安装依赖 `symfony/cache`
+
+## 使用注意事项
+
+<details>
+<summary>关于默认的缓存过期时间</summary>
+
+Laravel Cache 没有缓存的默认过期时间
+
+Cache::put 方法的第三个参数 ttl，不传时为永久缓存，为 0 或负数时表示移除该缓存（等同于 forget）
+</details>
+
+<details>
+<summary>Cache::flush 清除的范围</summary>
+
+会清空该存储器下的所有数据，而非指定的 prefix 下的，所以当缓存共享，通过 prefix 区分时，需要谨慎调用该方法
+
+可以通过在 `config/plugin/webman-tech/laravel-cache/app.php` 下配置 `flush` 下的 `prevent` 为 `true` 来全局禁止使用 `flush` 方法
+（注意：无法阻止通过实例直接获取到 Store 来 flush 的情况 `Cache::instance()->getStore()->flush()`），
+</details>
