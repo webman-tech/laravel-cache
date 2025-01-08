@@ -27,7 +27,7 @@ class ForgetCommand extends Command
      * @param OutputInterface $output
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $key = $input->getArgument('key');
         Cache::instance()->store($input->getArgument('store'))->forget($key);
