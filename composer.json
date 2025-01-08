@@ -9,7 +9,7 @@
     "illuminate/config": "^11.0",
     "illuminate/events": "^11.0"
   },
-  "_comments": [
+  "_comment": [
     "symfony/cache for psr16"
   ],
   "autoload": {

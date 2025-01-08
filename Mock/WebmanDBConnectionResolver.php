@@ -4,6 +4,7 @@ namespace WebmanTech\LaravelCache\Mock;
 
 use Illuminate\Database\ConnectionResolverInterface;
 use support\Db;
+use WebmanTech\LaravelCache\Helper\ConfigHelper;
 
 final class WebmanDBConnectionResolver implements ConnectionResolverInterface
 {
@@ -20,7 +21,7 @@ final class WebmanDBConnectionResolver implements ConnectionResolverInterface
      */
     public function getDefaultConnection()
     {
-        return config('database.default');
+        return ConfigHelper::getGlobal('database.default');
     }
 
     /**
