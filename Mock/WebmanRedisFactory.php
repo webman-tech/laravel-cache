@@ -5,6 +5,9 @@ namespace WebmanTech\LaravelCache\Mock;
 use Illuminate\Contracts\Redis\Factory;
 use support\Redis;
 
+/**
+ * @internal 
+ */
 final class WebmanRedisFactory implements Factory
 {
     /**

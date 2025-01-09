@@ -7,7 +7,6 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheInterface;
 use support\Container;
 use Symfony\Component\Cache\Adapter\Psr16Adapter;
-use WebmanTech\LaravelCache\CacheConfigRepository;
 use WebmanTech\LaravelCache\Helper\ConfigHelper;
 use WebmanTech\LaravelCache\Macro\FlushPreventMacro;
 use WebmanTech\LaravelCache\Mock\LaravelApp;
@@ -82,7 +81,7 @@ class Cache
             (new FlushPreventMacro(ConfigHelper::get('app.flush', [])))->macro();
 
             $cacheManager = new CacheManager(Container::get(LaravelApp::class));
-            if ($extend = CacheConfigRepository::instance()->get('cache.extend')) {
+            if ($extend = ConfigHelper::getGlobal('cache.extend')) {
                 call_user_func($extend, $cacheManager);
             }
             static::$_instance = $cacheManager;

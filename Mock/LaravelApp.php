@@ -3,15 +3,22 @@
 namespace WebmanTech\LaravelCache\Mock;
 
 use Illuminate\Cache\MemcachedConnector;
+use Illuminate\Config\Repository;
+use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Redis\Factory as RedisFactory;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use support\Container;
+use support\Db;
 use Webman\Container as WebmanContainer;
-use WebmanTech\LaravelCache\CacheConfigRepository;
+use WebmanTech\LaravelCache\Helper\ConfigHelper;
+use WebmanTech\LaravelCache\Helper\ExtComponentGetter;
 
+/**
+ * @internal
+ */
 final class LaravelApp implements \ArrayAccess
 {
     private $container;
@@ -20,62 +27,32 @@ final class LaravelApp implements \ArrayAccess
     {
         $this->container = new WebmanContainer();
         $this->container->addDefinitions([
-            'files' => function (): Filesystem {
-                if ($component = $this->guessContainerComponent(['files'], Filesystem::class)) {
-                    return $component;
-                }
-                if (!class_exists(Filesystem::class)) {
-                    throw new \InvalidArgumentException('must install illuminate/filesystem first');
-                }
-                return new Filesystem();
-            },
-            'memcached.connector' => function () {
-                if ($component = $this->guessContainerComponent(['memcached.connector'], MemcachedConnector::class)) {
-                    return $component;
-                }
-                return new MemcachedConnector();
-            },
-            'redis' => function () {
-                if ($component = $this->guessContainerComponent(['redis'], RedisFactory::class)) {
-                    return $component;
-                }
-                return new WebmanRedisFactory();
-            },
-            'db' => function () {
-                if ($component = $this->guessContainerComponent(['db'], ConnectionResolverInterface::class)) {
-                    return $component;
-                }
-                return new WebmanDBConnectionResolver();
-            },
-            DispatcherContract::class => function () {
-                if ($component = $this->guessContainerComponent(['events'], DispatcherContract::class)) {
-                    return $component;
-                }
-                return new Dispatcher();
-            },
-            'config' => function () {
-                return CacheConfigRepository::instance();
-            }
+            'files' => fn() => ExtComponentGetter::get(Filesystem::class, [
+                'default' => fn() => new Filesystem()
+            ]),
+            'memcached.connector' => fn() => ExtComponentGetter::get(MemcachedConnector::class, [
+                'default' => fn() => new MemcachedConnector()
+            ]),
+            'redis' => fn() => ExtComponentGetter::get(RedisFactory::class, [
+                'default' => fn() => new WebmanRedisFactory()
+            ]),
+            'db' => fn() => ExtComponentGetter::get(ConnectionResolverInterface::class, [
+                'default' => fn() => Db::getInstance()->getDatabaseManager()
+            ]),
+            DispatcherContract::class => fn() => ExtComponentGetter::get(DispatcherContract::class, [
+                'default' => fn() => new Dispatcher()
+            ]),
+            'config' => fn() => ExtComponentGetter::get(ConfigContract::class, [
+                'default' => fn() => new Repository([
+                    'cache' => ConfigHelper::getGlobal('cache', []), // 使用全局的 cache 配置
+                ]),
+            ]),
         ]);
     }
 
     public function bound($abstract)
     {
         return Container::has($abstract);
-    }
-
-    private function guessContainerComponent(array $maybeContainerKeys, string $componentClass)
-    {
-        $maybeContainerKeys[] = $componentClass;
-        foreach ($maybeContainerKeys as $name) {
-            if (Container::has($name)) {
-                $component = Container::get($name);
-                if ($component instanceof $componentClass) {
-                    return $component;
-                }
-            }
-        }
-        return null;
     }
 
     /**
