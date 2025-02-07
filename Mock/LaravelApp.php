@@ -11,7 +11,6 @@ use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use support\Container;
-use support\Db;
 use Webman\Container as WebmanContainer;
 use WebmanTech\LaravelCache\Helper\ConfigHelper;
 use WebmanTech\LaravelCache\Helper\ExtComponentGetter;
@@ -37,7 +36,7 @@ final class LaravelApp implements \ArrayAccess
                 'default' => fn() => new WebmanRedisFactory()
             ]),
             'db' => fn() => ExtComponentGetter::get(ConnectionResolverInterface::class, [
-                'default' => fn() => Db::getInstance()->getDatabaseManager()
+                'default' => fn() => LaravelDb::getInstance()->getDatabaseManager()
             ]),
             DispatcherContract::class => fn() => ExtComponentGetter::get(DispatcherContract::class, [
                 'default' => fn() => new Dispatcher()
