@@ -43,7 +43,7 @@ final class LaravelApp implements \ArrayAccess
             ]),
             'config' => fn() => ExtComponentGetter::get(ConfigContract::class, [
                 'default' => fn() => new Repository([
-                    'cache' => ConfigHelper::getGlobal('cache', []), // 使用全局的 cache 配置
+                    'cache' => ConfigHelper::get('cache', []),
                 ]),
             ]),
         ]);

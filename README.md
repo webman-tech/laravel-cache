@@ -23,6 +23,8 @@ composer require webman-tech/laravel-cache
 ### Facade 入口
 
 使用 `WebmanTech\LaravelCache\Facades\Cache` 代替 `Illuminate\Support\Facades\Cache`
+使用 `WebmanTech\LaravelCache\Facades\CacheLocker` 用于锁操作
+使用 `WebmanTech\LaravelCache\Facades\CacheRateLimiter` 代替 `Illuminate\Support\Facades\RateLimiter`
 
 ### command 支持
 
@@ -51,6 +53,37 @@ return [
 - PSR16: `Cache::psr16()`
 
 - PSR6: `Cache::psr6()`，需要先安装依赖 `symfony/cache`
+
+### Throttle Middleware 支持
+
+该库实现了类似 Laravel Route 下的 [throttle(Middleware\ThrottleRequests)](https://laravel.com/docs/routing#rate-limiting)，
+适用于 webman 路由，用于快速处理接口限流等
+
+#### 配置
+
+在 `config/plugin/webman-tech/laravel-cache/rate_limiter.php` 下配置 `for`，
+配置方式同 Laravel 的 `RateLimiter::for`
+
+#### 使用
+
+```php
+<?php
+use Webman\Route;
+
+Route::get('/example', function () {
+    //
+})->middleware([
+    \WebmanTech\LaravelCache\Middleware\ThrottleRequestsFactory::class,
+]);
+
+Route::get('/example2', function () {
+    //
+})->middleware([
+    new \WebmanTech\LaravelCache\Middleware\ThrottleRequestsFactory([
+        'limiter_for' => 'upload', // 需要在 rate_limiter.php 中配置 upload 的 for
+    ]),
+]);
+```
 
 ## 使用注意事项
 

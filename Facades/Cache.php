@@ -82,7 +82,7 @@ class Cache
             (new FlushPreventMacro(ConfigHelper::get('app.flush', [])))->macro();
 
             $cacheManager = new CacheManager(Container::get(LaravelApp::class));
-            if ($extend = ConfigHelper::getGlobal('cache.extend')) {
+            if ($extend = ConfigHelper::get('cache.extend')) {
                 call_user_func($extend, $cacheManager);
             }
             static::$_instance = $cacheManager;
