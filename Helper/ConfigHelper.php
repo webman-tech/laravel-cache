@@ -5,7 +5,7 @@ namespace WebmanTech\LaravelCache\Helper;
 /**
  * @internal
  */
-class ConfigHelper
+final class ConfigHelper
 {
     /**
      * 获取配置
