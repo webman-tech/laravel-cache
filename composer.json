@@ -5,9 +5,9 @@
   "description": "Webman plugin webman-tech/laravel-cache",
   "require": {
     "php": "^8.2",
-    "illuminate/cache": "^11.0",
-    "illuminate/config": "^11.0",
-    "illuminate/events": "^11.0"
+    "illuminate/cache": "^12.0",
+    "illuminate/config": "^12.0",
+    "illuminate/events": "^12.0"
   },
   "_comment": [
     "symfony/cache for psr16"
