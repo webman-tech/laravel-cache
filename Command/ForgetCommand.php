@@ -2,17 +2,16 @@
 
 namespace WebmanTech\LaravelCache\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use WebmanTech\LaravelCache\Facades\Cache;
 
+#[AsCommand(name: 'cache:forget', description: 'Remove an item from the cache')]
 class ForgetCommand extends Command
 {
-    protected static $defaultName = 'cache:forget';
-    protected static $defaultDescription = 'Remove an item from the cache';
-
     /**
      * @return void
      */
