@@ -10,8 +10,8 @@ use support\Container;
 final class ExtComponentGetter
 {
     /**
-     * @template T of class-string
-     * @param T $needClass
+     * @template T
+     * @param class-string<T> $needClass
      * @param array $pick
      * @return T
      */

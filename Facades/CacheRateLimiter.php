@@ -6,7 +6,7 @@ use Illuminate\Cache\RateLimiter as LaravelRateLimiter;
 use WebmanTech\LaravelCache\Helper\ConfigHelper;
 
 /**
- * @method static \Illuminate\Cache\RateLimiter for(\BackedEnum|\UnitEnum|string $name, \Closure $callback)
+ * @method static \Illuminate\Cache\RateLimiter for (\BackedEnum|\UnitEnum|string $name, \Closure $callback)
  * @method static \Closure|null limiter(\BackedEnum|\UnitEnum|string $name)
  * @method static mixed attempt(string $key, int $maxAttempts, \Closure $callback, int $decaySeconds = 60)
  * @method static bool tooManyAttempts(string $key, int $maxAttempts)
@@ -34,7 +34,7 @@ class CacheRateLimiter
      */
     public static function instance(): LaravelRateLimiter
     {
-        if (!static::$_instance) {
+        if (!self::$_instance) {
             $rateLimiterConfig = array_merge([
                 'limiter' => null,
                 'for' => [],
@@ -44,10 +44,10 @@ class CacheRateLimiter
             foreach ($rateLimiterConfig['for'] as $name => $callback) {
                 $rateLimiter->for($name, $callback);
             }
-            static::$_instance = $rateLimiter;
+            self::$_instance = $rateLimiter;
         }
 
-        return static::$_instance;
+        return self::$_instance;
     }
 
     public static function __callStatic($name, $arguments)

@@ -121,6 +121,7 @@ class ThrottleRequests implements MiddlewareInterface
         );
 
         $responseCallback = $limit->responseCallback;
+        /** @phpstan-ignore-next-line */
         return is_callable($responseCallback)
             ? $responseCallback($request, $headers)
             : new ThrottleRequestsException('Too Many Attempts.', $headers);

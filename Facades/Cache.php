@@ -78,17 +78,17 @@ class Cache
      */
     public static function instance(): CacheManager
     {
-        if (!static::$_instance) {
+        if (!self::$_instance) {
             (new FlushPreventMacro(ConfigHelper::get('app.flush', [])))->macro();
 
             $cacheManager = new CacheManager(Container::get(LaravelApp::class));
             if ($extend = ConfigHelper::get('cache.extend')) {
                 call_user_func($extend, $cacheManager);
             }
-            static::$_instance = $cacheManager;
+            self::$_instance = $cacheManager;
         }
 
-        return static::$_instance;
+        return self::$_instance;
     }
 
     /**

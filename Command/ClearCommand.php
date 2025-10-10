@@ -2,6 +2,7 @@
 
 namespace WebmanTech\LaravelCache\Command;
 
+use Illuminate\Cache\Repository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -46,6 +47,11 @@ TXT
         }
 
         $cache = Cache::instance()->store($input->getArgument('store'));
+        if (!$cache instanceof Repository) {
+            $output->writeln('Invalid cache store.');
+            return self::FAILURE;
+        }
+
         $tags = array_filter(explode(',', $input->getOption('tags') ?? ''));
         if ($tags) {
             $cache->tags($tags);
