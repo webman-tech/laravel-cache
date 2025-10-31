@@ -2,13 +2,7 @@
 
 > Split from [webman-tech/laravel-monorepo](https://github.com/webman-tech/laravel-monorepo)
 
-Laravel [illuminate/cache](https://packagist.org/packages/illuminate/cache) for webman
-
-## 介绍
-
-站在巨人（laravel）的肩膀上使缓存使用更加*可靠*和*便捷*
-
-所有方法和配置与 laravel 几乎一模一样，因此使用方式完全参考 [Laravel文档](https://laravel.com/docs/cache) 即可
+适用于 webman 的 Laravel 缓存组件，基于 illuminate/cache 实现。
 
 ## 安装
 
@@ -16,29 +10,39 @@ Laravel [illuminate/cache](https://packagist.org/packages/illuminate/cache) for 
 composer require webman-tech/laravel-cache
 ```
 
-## 使用
+## 简介
 
-所有 API 同 laravel，以下仅对有些特殊的操作做说明
+该组件将 Laravel 强大的缓存功能引入 webman 框架中，使开发者能够使用 Laravel 的缓存 API。
 
-### Facade 入口
+所有方法和配置与 Laravel 几乎一致，因此使用方式可完全参考 [Laravel Cache 文档](https://laravel.com/docs/cache)。
 
-使用 `WebmanTech\LaravelCache\Facades\Cache` 代替 `Illuminate\Support\Facades\Cache`
-使用 `WebmanTech\LaravelCache\Facades\CacheLocker` 用于锁操作
-使用 `WebmanTech\LaravelCache\Facades\CacheRateLimiter` 代替 `Illuminate\Support\Facades\RateLimiter`
+## 特殊使用说明
 
-### command 支持
+### 1. Facades 使用方式
 
-- `php webman cache:forget xxx`: 删除缓存下的某个键
+在 webman 中使用以下 Facades 替代 Laravel 的对应 Facades：
 
-- `php webman cache:clear`: 清空所有缓存 （！！注意：此方法使用 Cache::flush 来清除，影响范围见下文中的使用注意事项！！）
+- 使用 `WebmanTech\LaravelCache\Facades\Cache` 替代 `Illuminate\Support\Facades\Cache`
+- 使用 `WebmanTech\LaravelCache\Facades\CacheLocker` 处理锁操作
+- 使用 `WebmanTech\LaravelCache\Facades\CacheRateLimiter` 替代 `Illuminate\Support\Facades\RateLimiter`
 
-### extend 支持
+### 2. 命令行支持
 
-在 `config/plugin/webman-tech/laravel-cache/cache.php` 中配置 `extend`
+组件提供以下命令行工具：
 
-```PHP
-<?php
+```bash
+# 删除缓存下的某个键
+php webman cache:forget key_name
 
+# 清空所有缓存（注意：此方法使用 Cache::flush 来清除）
+php webman cache:clear
+```
+
+### 3. 扩展支持
+
+在 `config/plugin/webman-tech/laravel-cache/cache.php` 中配置 `extend`：
+
+```php
 return [
     'extend' => function(\Illuminate\Cache\CacheManager $cache) {
         $cache->extend('mongo', function () use ($cache) {
@@ -48,58 +52,34 @@ return [
 ];
 ```
 
-### PSR6 和 PSR16 支持
-
-- PSR16: `Cache::psr16()`
-
-- PSR6: `Cache::psr6()`，需要先安装依赖 `symfony/cache`
-
-### Throttle Middleware 支持
-
-该库实现了类似 Laravel Route 下的 [throttle(Middleware\ThrottleRequests)](https://laravel.com/docs/routing#rate-limiting)，
-适用于 webman 路由，用于快速处理接口限流等
-
-#### 配置
-
-在 `config/plugin/webman-tech/laravel-cache/rate_limiter.php` 下配置 `for`，
-配置方式同 Laravel 的 `RateLimiter::for`
-
-#### 使用
+### 4. PSR 标准支持
 
 ```php
-<?php
-use Webman\Route;
+// PSR-16 简单缓存
+$psr16 = Cache::psr16();
 
-Route::get('/example', function () {
-    //
-})->middleware([
-    \WebmanTech\LaravelCache\Middleware\ThrottleRequestsFactory::class,
-]);
-
-Route::get('/example2', function () {
-    //
-})->middleware([
-    new \WebmanTech\LaravelCache\Middleware\ThrottleRequestsFactory([
-        'limiter_for' => 'upload', // 需要在 rate_limiter.php 中配置 upload 的 for
-    ]),
-]);
+// PSR-6 缓存池（需要安装 symfony/cache）
+$psr6 = Cache::psr6();
 ```
 
-## 使用注意事项
+### 5. 限流中间件
 
-<details>
-<summary>关于默认的缓存过期时间</summary>
+组件实现了适用于 webman 路由的限流中间件：
 
-Laravel Cache 没有缓存的默认过期时间
+```php
+use Webman\Route;
+use WebmanTech\LaravelCache\Middleware\ThrottleRequestsFactory;
 
-Cache::put 方法的第三个参数 ttl，不传时为永久缓存，为 0 或负数时表示移除该缓存（等同于 forget）
-</details>
+Route::get('/api/users', [UserController::class, 'index'])
+    ->middleware([
+        new ThrottleRequestsFactory([
+            'limiter_for' => 'api', // 需要在 rate_limiter.php 中配置
+        ]),
+    ]);
+```
 
-<details>
-<summary>Cache::flush 清除的范围</summary>
+## 注意事项
 
-会清空该存储器下的所有数据，而非指定的 prefix 下的，所以当缓存共享，通过 prefix 区分时，需要谨慎调用该方法
-
-可以通过在 `config/plugin/webman-tech/laravel-cache/app.php` 下配置 `flush` 下的 `prevent` 为 `true` 来全局禁止使用 `flush` 方法
-（注意：无法阻止通过实例直接获取到 Store 来 flush 的情况 `Cache::instance()->getStore()->flush()`），
-</details>
+1. `Cache::flush()` 会清空存储器下的所有数据，而非仅当前应用的缓存
+2. 可通过配置 `app.flush.prevent = true` 禁止使用 flush 方法
+3. 缓存的默认过期时间为永久，需要手动设置过期时间
