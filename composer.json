@@ -7,7 +7,8 @@
     "php": "^8.2",
     "illuminate/cache": "^12.0",
     "illuminate/config": "^12.0",
-    "illuminate/events": "^12.0"
+    "illuminate/events": "^12.0",
+    "webman-tech/common-utils": "^5.0 || dev-main"
   },
   "_comment": [
     "symfony/cache for psr16"

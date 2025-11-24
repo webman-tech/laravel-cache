@@ -10,8 +10,8 @@ use Illuminate\Contracts\Redis\Factory as RedisFactory;
 use Illuminate\Database\ConnectionResolverInterface;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
-use support\Container;
 use Webman\Container as WebmanContainer;
+use WebmanTech\CommonUtils\Container;
 use WebmanTech\LaravelCache\Helper\ConfigHelper;
 use WebmanTech\LaravelCache\Helper\ExtComponentGetter;
 

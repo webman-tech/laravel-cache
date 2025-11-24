@@ -2,7 +2,7 @@
 
 namespace WebmanTech\LaravelCache\Helper;
 
-use support\Container;
+use WebmanTech\CommonUtils\Container;
 
 /**
  * @internal
