@@ -51,7 +51,7 @@ final class LaravelApp implements \ArrayAccess
 
     public function bound($abstract)
     {
-        return Container::has($abstract);
+        return Container::getCurrent()->has($abstract);
     }
 
     /**
