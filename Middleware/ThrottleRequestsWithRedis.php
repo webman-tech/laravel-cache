@@ -12,11 +12,6 @@ use Illuminate\Redis\Limiters\DurationLimiter;
 class ThrottleRequestsWithRedis extends ThrottleRequests
 {
     /**
-     * @var Redis
-     */
-    protected $redis;
-
-    /**
      * @var array
      */
     public $decaysAt = [];
@@ -30,8 +25,11 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
     {
         $this->config['redis_connection_name'] = null;
         parent::__construct($config);
+    }
 
-        $this->redis = \support\Redis::connection($this->config['redis_connection_name']);
+    protected function getRedis(): Redis
+    {
+        return \support\Redis::connection($this->config['redis_connection_name']);
     }
 
     /**
@@ -40,7 +38,7 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
     protected function tooManyAttempts(Limit $limit): bool
     {
         $limiter = new DurationLimiter(
-            $this->redis, $limit->key, $limit->maxAttempts, $limit->decaySeconds
+            $this->getRedis(), $limit->key, $limit->maxAttempts, $limit->decaySeconds
         );
 
         $key = $limit->key;
