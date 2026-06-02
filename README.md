@@ -23,8 +23,8 @@ composer require webman-tech/laravel-cache
 在 webman 中使用以下 Facades 替代 Laravel 的对应 Facades：
 
 - 使用 `WebmanTech\LaravelCache\Facades\Cache` 替代 `Illuminate\Support\Facades\Cache`
-- 使用 `WebmanTech\LaravelCache\Facades\CacheLocker` 处理锁操作
 - 使用 `WebmanTech\LaravelCache\Facades\CacheRateLimiter` 替代 `Illuminate\Support\Facades\RateLimiter`
+- 使用 `WebmanTech\LaravelCache\Facades\CacheLocker` 处理锁操作，支持 `watchdog` 前缀实现锁自动续期
 
 ### 2. 命令行支持
 
@@ -77,6 +77,39 @@ Route::get('/api/users', [UserController::class, 'index'])
         ]),
     ]);
 ```
+
+### 6. Watchdog Lock（锁自动续期）
+
+Laravel 的 Cache Lock 有固定的 TTL，长任务执行期间锁可能过期。Watchdog Lock 在锁持有期间自动续期，防止锁意外丢失。
+
+```php
+// 通过 CacheLocker 使用 watchdog 锁（推荐）
+$lock = CacheLocker::watchdogOrder('order_123', 30); // 30s TTL，每 10s 自动续期
+$lock->get(function () {
+    // 长时间任务，锁不会过期
+    $this->processOrder();
+});
+
+// 手动 acquire/release 模式
+$lock = CacheLocker::watchdogOrder('order_123', 30);
+if ($lock->acquire()) {
+    try {
+        $this->processOrder();
+    } finally {
+        $lock->release();
+    }
+}
+```
+
+watchdog 前缀的使用方式与 `restore` 前缀一致，仅影响行为，不影响锁名：
+
+```php
+CacheLocker::order('key', 30);          // 普通锁，锁名: order:key
+CacheLocker::watchdogOrder('key', 30);   // watchdog 锁，锁名: order:key（同一把锁）
+```
+
+支持所有 cache store 类型（Redis、Database、Memcached、File、Array），Redis 使用 Lua 脚本原子续期，Database 使用条件更新，其他
+store 尽力而为。
 
 ## 注意事项
 
