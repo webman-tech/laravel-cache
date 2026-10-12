@@ -18,8 +18,9 @@ final class ExtComponentGetter
     public static function get(string $needClass, array $pick = [])
     {
         $component = null;
-        if (Container::getCurrent()->has($needClass)) {
-            $component = Container::getCurrent()->get($needClass);
+        $container = Container::getCurrent();
+        if ($container->has($needClass)) {
+            $component = $container->get($needClass);
         }
         if (!$component && $pick) {
             foreach ($pick as $className => $getInstance) {

@@ -35,6 +35,7 @@ final class WatchdogRedisLock extends RedisLock
      */
     protected function renew(): bool
     {
-        return (bool) $this->redis->eval(LuaScripts::refreshLock(), 1, $this->name, $this->owner, $this->seconds); // @phpstan-ignore method.notFound
+        // @phpstan-ignore-next-line
+        return (bool)$this->redis->eval(LuaScripts::refreshLock(), 1, $this->name, $this->owner, $this->seconds);
     }
 }
