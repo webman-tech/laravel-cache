@@ -2,7 +2,7 @@
 
 > Split from [webman-tech/laravel-monorepo](https://github.com/webman-tech/laravel-monorepo)
 
-适用于 webman 的 Laravel 缓存组件，基于 illuminate/cache 实现。
+适用于 webman 与非 webman 环境的 Laravel 缓存组件，基于 illuminate/cache 实现。
 
 ## 安装
 
@@ -11,8 +11,6 @@ composer require webman-tech/laravel-cache
 ```
 
 ## 简介
-
-该组件将 Laravel 强大的缓存功能引入 webman 框架中，使开发者能够使用 Laravel 的缓存 API。
 
 所有方法和配置与 Laravel 几乎一致，因此使用方式可完全参考 [Laravel Cache 文档](https://laravel.com/docs/cache)。
 
@@ -64,7 +62,9 @@ $psr6 = Cache::psr6();
 
 ### 5. 限流中间件
 
-组件实现了适用于 webman 路由的限流中间件：
+组件提供的限流中间件继承 `webman-tech/common-utils` 的 `BaseMiddleware`（统一
+`processRequest(Request $request, Closure $handler): Response` 入口，自动兼容 webman `process()` 与 Laravel `handle()`
+双入口），webman 与非 webman 宿主均可直接使用，无需区分命名空间：
 
 ```php
 use Webman\Route;
@@ -77,6 +77,8 @@ Route::get('/api/users', [UserController::class, 'index'])
         ]),
     ]);
 ```
+
+限流回调（`limiter_for` 对应的 `RateLimiter::for` 闭包）收到的请求对象为宿主原生 Request。
 
 ### 6. Watchdog Lock（锁自动续期）
 

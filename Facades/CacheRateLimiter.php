@@ -6,8 +6,8 @@ use Illuminate\Cache\RateLimiter as LaravelRateLimiter;
 use WebmanTech\LaravelCache\Helper\ConfigHelper;
 
 /**
- * @method static \Illuminate\Cache\RateLimiter for(\BackedEnum|\UnitEnum|string $name, \Closure $callback)
- * @method static \Closure|null limiter(\BackedEnum|\UnitEnum|string $name)
+ * @method static \Illuminate\Cache\RateLimiter for(\UnitEnum|string $name, \Closure $callback)
+ * @method static \Closure|null limiter(\UnitEnum|string $name)
  * @method static mixed attempt(string $key, int $maxAttempts, \Closure $callback, \DateTimeInterface|\DateInterval|int $decaySeconds = 60)
  * @method static bool tooManyAttempts(string $key, int $maxAttempts)
  * @method static int hit(string $key, \DateTimeInterface|\DateInterval|int $decaySeconds = 60)

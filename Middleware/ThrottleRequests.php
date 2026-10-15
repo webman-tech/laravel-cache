@@ -2,21 +2,24 @@
 
 namespace WebmanTech\LaravelCache\Middleware;
 
+use Closure;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Cache\RateLimiting\Unlimited;
 use Illuminate\Support\Arr;
 use Illuminate\Support\InteractsWithTime;
-use Webman\Http\Request;
-use Webman\Http\Response;
-use Webman\MiddlewareInterface;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Webman\Http\Response as WebmanResponse;
+use WebmanTech\CommonUtils\Middleware\BaseMiddleware;
+use WebmanTech\CommonUtils\Request;
+use WebmanTech\CommonUtils\Response;
 use WebmanTech\LaravelCache\Exceptions\ThrottleRequestsException;
 use WebmanTech\LaravelCache\Facades\CacheRateLimiter;
 
 /**
  * @see https://github.com/laravel/framework/blob/11.x/src/Illuminate/Routing/Middleware/ThrottleRequests.php
  */
-class ThrottleRequests implements MiddlewareInterface
+class ThrottleRequests extends BaseMiddleware
 {
     use InteractsWithTime;
 
@@ -45,16 +48,21 @@ class ThrottleRequests implements MiddlewareInterface
     /**
      * @inheritDoc
      */
-    public function process(Request $request, callable $handler): Response
+    public function processRequest(Request $request, Closure $handler): Response
     {
         $limiter = $this->limiter->limiter($this->config['limiter_for']);
         if ($limiter === null) {
             return $handler($request);
         }
-        $limiterResponse = $limiter($request);
+        // limiter 回调保持使用宿主原始请求对象
+        $limiterResponse = $limiter($request->getRaw());
 
-        if ($limiterResponse instanceof Response) {
-            return $limiterResponse;
+        // 回调可直接返回响应：CommonUtils 包装或宿主原始 Response（webman 下与历史版本行为一致）
+        if ($limiterResponse instanceof Response
+            || $limiterResponse instanceof WebmanResponse
+            || $limiterResponse instanceof SymfonyResponse
+        ) {
+            return Response::from($limiterResponse);
         } elseif ($limiterResponse instanceof Unlimited) {
             return $handler($request);
         }
@@ -123,7 +131,7 @@ class ThrottleRequests implements MiddlewareInterface
         $responseCallback = $limit->responseCallback;
         /** @phpstan-ignore-next-line */
         return is_callable($responseCallback)
-            ? $responseCallback($request, $headers)
+            ? Response::from($responseCallback($request->getRaw(), $headers))
             : new ThrottleRequestsException('Too Many Attempts.', $headers);
     }
 

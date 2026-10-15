@@ -3,8 +3,10 @@
 namespace WebmanTech\LaravelCache\Middleware;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Redis\Factory as RedisFactory;
 use Illuminate\Redis\Connections\Connection as Redis;
 use Illuminate\Redis\Limiters\DurationLimiter;
+use WebmanTech\LaravelCache\Helper\ExtComponentGetter;
 
 /**
  * 参考：https://github.com/laravel/framework/blob/11.x/src/Illuminate/Routing/Middleware/ThrottleRequestsWithRedis.php
@@ -29,7 +31,15 @@ class ThrottleRequestsWithRedis extends ThrottleRequests
 
     protected function getRedis(): Redis
     {
-        return \support\Redis::connection($this->config['redis_connection_name']);
+        $factory = ExtComponentGetter::get(RedisFactory::class);
+        if (!$factory instanceof RedisFactory) {
+            throw new \RuntimeException(sprintf(
+                '%s not available, require `webman-tech/laravel-redis` or bind `%s` into container',
+                RedisFactory::class,
+                RedisFactory::class,
+            ));
+        }
+        return $factory->connection($this->config['redis_connection_name']);
     }
 
     /**

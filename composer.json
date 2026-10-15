@@ -23,5 +23,9 @@
   },
   "config": {
     "sort-packages": true
+  },
+  "suggest": {
+    "webman-tech/laravel-database": "使用 database 缓存 store 时需要（或向容器绑定 Illuminate\\Database\\ConnectionResolverInterface）",
+    "webman-tech/laravel-redis": "使用 redis 缓存 store 及限流中间件时需要（或向容器绑定 Illuminate\\Contracts\\Redis\\Factory）"
   }
 }
