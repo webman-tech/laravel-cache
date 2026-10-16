@@ -38,7 +38,7 @@ final class ExtComponentGetter extends BaseExtComponentGetter
             ConnectionResolverInterface::class => [
                 'alias' => ['db'],
                 // laravel-database 为可选依赖，未安装时返回 null（database store 使用时才需要）
-                'singleton' => fn() => class_exists(DatabaseFacade::class) ? DatabaseFacade::resolveDefault() : null,
+                'singleton' => fn() => class_exists(DatabaseFacade::class) ? DatabaseFacade::getInstance()->getDatabaseManager() : null,
             ],
             DispatcherContract::class => [
                 'alias' => ['events'],
