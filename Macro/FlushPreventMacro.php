@@ -13,17 +13,20 @@ use WebmanTech\LaravelCache\Exceptions\PreventFlushException;
  */
 final class FlushPreventMacro
 {
-    private $config = [
+    private array $config = [
         'prevent' => false,
         'ignore_store' => [NullStore::class, ArrayStore::class, FileStore::class],
     ];
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->config = array_merge($this->config, $config);
     }
 
-    public function macro()
+    public function macro(): void
     {
         if (!$this->config['prevent']) {
             return;

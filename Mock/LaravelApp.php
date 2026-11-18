@@ -13,10 +13,11 @@ use WebmanTech\LaravelCache\Helper\ExtComponentGetter;
 
 /**
  * @internal
+ * @implements \ArrayAccess<string, mixed>
  */
 final class LaravelApp implements \ArrayAccess
 {
-    private $container;
+    private LaravelContainer $container;
 
     public function __construct()
     {
@@ -35,7 +36,7 @@ final class LaravelApp implements \ArrayAccess
         }
     }
 
-    public function bound($abstract)
+    public function bound(string $abstract): bool
     {
         return $this->container->bound($abstract);
     }

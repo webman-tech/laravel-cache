@@ -10,13 +10,16 @@ use WebmanTech\LaravelCache\Helper\ConfigHelper;
 
 class ThrottleRequestsFactory extends BaseMiddleware
 {
-    private $config = [
+    private array $config = [
         'use_redis' => false, // 是否使用 redis 模式，推荐
         'redis_connection_name' => null, // redis 模式下使用的 redis connection Name
         'limiter_for' => null, // RateLimiter 的 for 的 name
         'with_headers' => true, // 返回时是否携带 header 信息
     ];
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function __construct(array $config = [])
     {
         $this->config = array_merge(

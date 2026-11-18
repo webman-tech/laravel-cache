@@ -7,9 +7,15 @@ use Throwable;
 class ThrottleRequestsException extends \Exception
 {
     private int $statusCode;
+    /**
+     * @var array<string, mixed>
+     */
     private array $headers;
 
-    public function __construct($message = "", array $headers = [], int $statusCode = 429, $code = 0, Throwable $previous = null)
+    /**
+     * @param array<string, mixed> $headers
+     */
+    public function __construct(string $message = "", array $headers = [], int $statusCode = 429, int $code = 0, ?Throwable $previous = null)
     {
         $this->headers = $headers;
         $this->statusCode = $statusCode;
@@ -22,6 +28,9 @@ class ThrottleRequestsException extends \Exception
         return $this->statusCode;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getHeaders(): array
     {
         return $this->headers;
