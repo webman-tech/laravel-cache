@@ -3,16 +3,12 @@
 namespace WebmanTech\LaravelCache\Mock;
 
 use Illuminate\Cache\MemcachedConnector;
-use Illuminate\Config\Repository;
+use Illuminate\Container\Container as LaravelContainer;
 use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Redis\Factory as RedisFactory;
 use Illuminate\Database\ConnectionResolverInterface;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
-use Webman\Container as WebmanContainer;
-use WebmanTech\CommonUtils\Container;
-use WebmanTech\LaravelCache\Helper\ConfigHelper;
 use WebmanTech\LaravelCache\Helper\ExtComponentGetter;
 
 /**
@@ -24,34 +20,24 @@ final class LaravelApp implements \ArrayAccess
 
     public function __construct()
     {
-        $this->container = new WebmanContainer();
-        $this->container->addDefinitions([
-            'files' => fn() => ExtComponentGetter::get(Filesystem::class, [
-                'default' => fn() => new Filesystem()
-            ]),
-            'memcached.connector' => fn() => ExtComponentGetter::get(MemcachedConnector::class, [
-                'default' => fn() => new MemcachedConnector()
-            ]),
-            'redis' => fn() => ExtComponentGetter::get(RedisFactory::class, [
-                'default' => fn() => new WebmanRedisFactory()
-            ]),
-            'db' => fn() => ExtComponentGetter::get(ConnectionResolverInterface::class, [
-                'default' => fn() => LaravelDb::getInstance()->getDatabaseManager()
-            ]),
-            DispatcherContract::class => fn() => ExtComponentGetter::get(DispatcherContract::class, [
-                'default' => fn() => new Dispatcher()
-            ]),
-            'config' => fn() => ExtComponentGetter::get(ConfigContract::class, [
-                'default' => fn() => new Repository([
-                    'cache' => ConfigHelper::get('cache', []),
-                ]),
-            ]),
-        ]);
+        $this->container = new LaravelContainer();
+        $bindings = [
+            'files' => Filesystem::class,
+            'memcached.connector' => MemcachedConnector::class,
+            'redis' => RedisFactory::class,
+            'db' => ConnectionResolverInterface::class,
+            DispatcherContract::class => DispatcherContract::class,
+            'config' => ConfigContract::class,
+        ];
+        foreach ($bindings as $abstract => $needClass) {
+            $instance = ExtComponentGetter::get($needClass);
+            $this->container->bind($abstract, fn() => $instance);
+        }
     }
 
     public function bound($abstract)
     {
-        return Container::getCurrent()->has($abstract);
+        return $this->container->bound($abstract);
     }
 
     /**
@@ -60,7 +46,7 @@ final class LaravelApp implements \ArrayAccess
     #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
-        return $this->container->has($offset);
+        return $this->container->bound($offset);
     }
 
     /**

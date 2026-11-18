@@ -2,12 +2,13 @@
 
 namespace WebmanTech\LaravelCache\Middleware;
 
-use Webman\Http\Request;
-use Webman\Http\Response;
-use Webman\MiddlewareInterface;
+use Closure;
+use WebmanTech\CommonUtils\Middleware\BaseMiddleware;
+use WebmanTech\CommonUtils\Request;
+use WebmanTech\CommonUtils\Response;
 use WebmanTech\LaravelCache\Helper\ConfigHelper;
 
-class ThrottleRequestsFactory implements MiddlewareInterface
+class ThrottleRequestsFactory extends BaseMiddleware
 {
     private $config = [
         'use_redis' => false, // 是否使用 redis 模式，推荐
@@ -28,14 +29,12 @@ class ThrottleRequestsFactory implements MiddlewareInterface
     /**
      * @inheritDoc
      */
-    public function process(Request $request, callable $handler): Response
+    public function processRequest(Request $request, Closure $handler): Response
     {
-        if ($this->config['use_redis']) {
-            $throttleRequest = new ThrottleRequestsWithRedis($this->config);
-        } else {
-            $throttleRequest = new ThrottleRequests($this->config);
-        }
+        $throttleRequest = $this->config['use_redis']
+            ? new ThrottleRequestsWithRedis($this->config)
+            : new ThrottleRequests($this->config);
 
-        return $throttleRequest->process($request, $handler);
+        return $throttleRequest->processRequest($request, $handler);
     }
 }
